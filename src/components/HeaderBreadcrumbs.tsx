@@ -1,0 +1,60 @@
+import { ReactNode, memo } from 'react';
+import { isString } from 'lodash';
+// material
+import { Box, Typography, Link } from '@material-ui/core';
+//
+import { MBreadcrumbsProps } from './@material-extend/MBreadcrumbs';
+
+// ----------------------------------------------------------------------
+
+interface HeaderBreadcrumbsProps extends MBreadcrumbsProps {
+  action?: ReactNode;
+  heading: string;
+  moreLink?: string | string[];
+  id?: string;
+}
+
+const HeaderBreadcrumbs = ({
+  links,
+  action,
+  heading,
+  id,
+  moreLink = '' || [],
+  sx,
+  ...other
+}: HeaderBreadcrumbsProps) => (
+  <Box sx={{ mb: 5, ...sx }}>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ flexGrow: 1 }}>
+        <Typography id={id} variant="h4" gutterBottom>
+          {heading}
+        </Typography>
+      </Box>
+
+      {action && <Box sx={{ flexShrink: 0 }}>{action}</Box>}
+    </Box>
+
+    <Box sx={{ mt: 2 }}>
+      {isString(moreLink) ? (
+        <Link href={moreLink} target="_blank" variant="body2">
+          {moreLink}
+        </Link>
+      ) : (
+        moreLink.map((href) => (
+          <Link
+            noWrap
+            key={href}
+            href={href}
+            variant="body2"
+            target="_blank"
+            sx={{ display: 'table' }}
+          >
+            {href}
+          </Link>
+        ))
+      )}
+    </Box>
+  </Box>
+);
+
+export default memo(HeaderBreadcrumbs);
