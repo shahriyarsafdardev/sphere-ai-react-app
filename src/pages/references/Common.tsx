@@ -5,7 +5,8 @@ import {
   styled,
   Typography,
   Stack,
-  IconButton
+  IconButton,
+  Box
 } from '@material-ui/core';
 import { memo } from 'react';
 import searchFill from '@iconify/icons-eva/search-fill';
@@ -35,6 +36,12 @@ export const StyledCard = styled(Card)(({ theme }) => ({
 export const Title = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
   fontSize: '30px'
+}));
+
+export const LoadingContainer = styled(Box)(() => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%'
 }));
 
 export const SearchBar = memo(

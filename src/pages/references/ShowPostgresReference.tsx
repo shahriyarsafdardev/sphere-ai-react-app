@@ -1,7 +1,19 @@
 import { memo, useState } from 'react';
-import { Button, Stack, Typography, Card } from '@material-ui/core';
+import LoadingScreen from 'components/LoadingScreen';
+import {
+  Button,
+  Stack,
+  Typography,
+  Card,
+  Table,
+  TableBody,
+  TableContainer,
+  TableRow,
+  TableCell,
+  TableHead
+} from '@material-ui/core';
 import axios from 'utils/axios';
-import { PostgresReference, SearchBar } from './Common';
+import { PostgresReference, SearchBar, LoadingContainer } from './Common';
 
 function ShowPostgresReference({
   reference,
@@ -12,14 +24,18 @@ function ShowPostgresReference({
 }) {
   const [query, setQuery] = useState('');
   const [queryResult, setQueryResult] = useState<any>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = () => {
+    setIsSearching(true);
+    setQueryResult(null);
     const getQuery = async () => {
       const response: any = await axios.get(
         `postgres_references/${reference?.id}/query?query=${query}`
       );
       console.log('Response:', response.data);
       setQueryResult(response.data?.result);
+      setIsSearching(false);
     };
     getQuery();
   };
@@ -40,18 +56,28 @@ function ShowPostgresReference({
         setSearchQuery={setQuery}
         buttonFunction={handleSearch}
       />
-      {queryResult &&
-        queryResult.map((response: any) => (
-          <Card sx={{ padding: '20px' }} key={response.id}>
-            <Stack spacing={1}>
-              {Object.keys(response).map((item: any) => (
-                <Typography key={item}>
-                  {item}: {response[item]}
-                </Typography>
-              ))}
-            </Stack>
-          </Card>
-        ))}
+      {isSearching && (
+        <LoadingContainer>
+          <LoadingScreen />
+        </LoadingContainer>
+      )}
+      {
+        queryResult &&
+          queryResult.map((response: any) => (
+            <Card sx={{ padding: '20px' }} key={response.id}>
+              <Stack spacing={1}>
+                {Object.keys(response).map((item: any) => (
+                  <Typography key={item}>
+                    {item}: {response[item]}
+                  </Typography>
+                ))}
+              </Stack>
+            </Card>
+          ))
+        // : (
+        //   <Typography sx={{ textAlign: 'center' }}>No results for this query</Typography>
+        // )
+      }
     </Stack>
   );
 }
