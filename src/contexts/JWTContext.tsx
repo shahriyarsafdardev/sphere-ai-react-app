@@ -148,7 +148,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
       password
     });
 
-    const { accessToken, user } = response.data;
+    const accessToken = response.headers.get('authorization');
+    const { user } = response.data;
 
     setSession(accessToken);
     dispatch({
