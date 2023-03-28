@@ -58,20 +58,30 @@ export default function Router() {
     },
     {
       path: '/',
+      element: <MainLayout />,
+      children: [
+        // { path: '/', element: <RedirectToCohort /> },
+        { path: '/postgres-references', element: <PostgresReferenceTab /> },
+        { path: '/hubspot-references', element: <HubspotReferenceTab /> }
+      ]
+    },
+    {
+      path: '/',
       element: (
         <AuthGuard>
           <MainLayout />
         </AuthGuard>
       ),
       children: [
-        {
-          path: '/user/:slug/references',
-          element: (
-            <RoleBasedGuard accessibleRoles={customerRoles}>
-              <></>
-            </RoleBasedGuard>
-          )
-        }
+        // { path: '/', element: <RedirectToCohort /> }
+        // {
+        //   path: '/user/:slug/postgres-references',
+        //   element: (
+        //     <RoleBasedGuard accessibleRoles={customerRoles}>
+        //       <PostgresReferenceTab />
+        //     </RoleBasedGuard>
+        //   )
+        // }
       ]
     },
     {
@@ -93,6 +103,12 @@ const Login = Loadable(lazy(() => import('../pages/authentication/Login')));
 const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetPassword')));
 const UpdatePassword = Loadable(lazy(() => import('../pages/authentication/UpdatePassword')));
 const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCode')));
+
+// References
+const PostgresReferenceTab = Loadable(
+  lazy(() => import('../pages/references/PostgresReferenceTab'))
+);
+const HubspotReferenceTab = Loadable(lazy(() => import('../pages/references/HubspotReferenceTab')));
 
 // Main
 const Page500 = Loadable(lazy(() => import('../pages/Page500')));
