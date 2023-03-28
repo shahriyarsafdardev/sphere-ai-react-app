@@ -1,8 +1,9 @@
 import { memo, useState } from 'react';
 import LoadingScreen from 'components/LoadingScreen';
-import { Button, Stack, Typography, Card } from '@material-ui/core';
+import { Button, Stack, Typography } from '@material-ui/core';
 import axios from 'utils/axios';
 import { HubspotReference, SearchBar, LoadingContainer } from './Common';
+import ResultTable from './ResultTable';
 
 function ShowHubspotReference({
   reference,
@@ -50,18 +51,7 @@ function ShowHubspotReference({
           <LoadingScreen />
         </LoadingContainer>
       )}
-      {queryResult &&
-        queryResult.map((response: any) => (
-          <Card sx={{ padding: '20px' }} key={response.id}>
-            <Stack spacing={1}>
-              {Object.keys(response).map((item: any) => (
-                <Typography key={item}>
-                  {item}: {response[item]}
-                </Typography>
-              ))}
-            </Stack>
-          </Card>
-        ))}
+      {queryResult && <ResultTable queryResult={queryResult} />}
     </Stack>
   );
 }

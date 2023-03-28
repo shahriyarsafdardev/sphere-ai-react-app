@@ -1,19 +1,9 @@
 import { memo, useState } from 'react';
 import LoadingScreen from 'components/LoadingScreen';
-import {
-  Button,
-  Stack,
-  Typography,
-  Card,
-  Table,
-  TableBody,
-  TableContainer,
-  TableRow,
-  TableCell,
-  TableHead
-} from '@material-ui/core';
+import { Button, Stack, Typography } from '@material-ui/core';
 import axios from 'utils/axios';
 import { PostgresReference, SearchBar, LoadingContainer } from './Common';
+import ResultTable from './ResultTable';
 
 function ShowPostgresReference({
   reference,
@@ -61,23 +51,7 @@ function ShowPostgresReference({
           <LoadingScreen />
         </LoadingContainer>
       )}
-      {
-        queryResult &&
-          queryResult.map((response: any) => (
-            <Card sx={{ padding: '20px' }} key={response.id}>
-              <Stack spacing={1}>
-                {Object.keys(response).map((item: any) => (
-                  <Typography key={item}>
-                    {item}: {response[item]}
-                  </Typography>
-                ))}
-              </Stack>
-            </Card>
-          ))
-        // : (
-        //   <Typography sx={{ textAlign: 'center' }}>No results for this query</Typography>
-        // )
-      }
+      {queryResult && <ResultTable queryResult={queryResult} />}
     </Stack>
   );
 }
