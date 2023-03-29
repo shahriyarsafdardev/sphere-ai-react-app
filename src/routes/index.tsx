@@ -56,15 +56,15 @@ export default function Router() {
         { path: 'verify', element: <VerifyCode /> }
       ]
     },
-    {
-      path: '/',
-      element: <MainLayout />,
-      children: [
-        // { path: '/', element: <RedirectToCohort /> },
-        { path: '/postgres-references', element: <PostgresReferenceTab /> },
-        { path: '/hubspot-references', element: <HubspotReferenceTab /> }
-      ]
-    },
+    // {
+    //   path: '/',
+    //   element: <MainLayout />,
+    //   children: [
+    //     // { path: '/', element: <RedirectToCohort /> },
+    //     { path: '/postgres-references', element: <PostgresReferenceTab /> },
+    //     { path: '/hubspot-references', element: <HubspotReferenceTab /> }
+    //   ]
+    // },
     {
       path: '/',
       element: (
@@ -73,15 +73,30 @@ export default function Router() {
         </AuthGuard>
       ),
       children: [
-        // { path: '/', element: <RedirectToCohort /> }
-        // {
-        //   path: '/user/:slug/postgres-references',
-        //   element: (
-        //     <RoleBasedGuard accessibleRoles={customerRoles}>
-        //       <PostgresReferenceTab />
-        //     </RoleBasedGuard>
-        //   )
-        // }
+        {
+          path: '/',
+          element: (
+            <AuthGuard>
+              <PostgresReferenceTab />
+            </AuthGuard>
+          )
+        },
+        {
+          path: '/postgres-references',
+          element: (
+            <AuthGuard>
+              <PostgresReferenceTab />
+            </AuthGuard>
+          )
+        },
+        {
+          path: '/hubspot-references',
+          element: (
+            <AuthGuard>
+              <PostgresReferenceTab />
+            </AuthGuard>
+          )
+        }
       ]
     },
     {
