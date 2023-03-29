@@ -21,13 +21,7 @@ import MenuPopover from '../../components/MenuPopover';
 
 // ----------------------------------------------------------------------
 
-const MENU_OPTIONS = [
-  {
-    label: 'Settings',
-    icon: settings2Fill,
-    linkTo: PATH_DASHBOARD.user.account
-  }
-];
+const MENU_OPTIONS: any[] = [];
 
 const StyledImage = styled('img')(({ theme }) => ({
   marginRight: 16,
@@ -58,7 +52,6 @@ export default function AccountPopover({ publicNavbar }: { publicNavbar?: boolea
       dispatch(resetStore());
       await logout?.();
       if (isMountedRef.current) {
-        navigate('/events');
         handleClose();
       }
     } catch (error) {
@@ -115,7 +108,7 @@ export default function AccountPopover({ publicNavbar }: { publicNavbar?: boolea
 
         <Divider sx={{ my: 1 }} />
 
-        {MENU_OPTIONS.map((option) => {
+        {MENU_OPTIONS?.map((option) => {
           if (option.label === 'Balance') {
             return (
               user?.type === 'learner' && (

@@ -5,5 +5,6 @@ import DashboardLayout from './dashboard';
 export default function MainLayout() {
   const { isAuthenticated } = useAuth();
 
-  return <>{isAuthenticated ? <DashboardLayout /> : <PublicDashboardLayout />}</>;
+  // return <>{isAuthenticated ? <DashboardLayout /> : <PublicDashboardLayout />}</>;
+  return <DashboardLayout />;
 }

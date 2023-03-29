@@ -36,6 +36,10 @@ export const PATH_DASHBOARD = {
   },
   user: {
     account: path(ROOTS_DASHBOARD, '/user/account')
+  },
+  references: {
+    postgres: path(ROOTS_DASHBOARD, '/postgres-references'),
+    hubspot: path(ROOTS_DASHBOARD, '/hubspot-references')
   }
 };
 

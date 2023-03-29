@@ -1,12 +1,12 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, useRoutes, useLocation } from 'react-router-dom';
 // layouts
+import DirectToHomePage from 'components/DirectToHomePage';
+import DashboardLayout from 'layouts/dashboard';
 import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
-import MainLayout from '../layouts/MainLayout';
 // guards
 import GuestGuard from '../guards/GuestGuard';
 import AuthGuard from '../guards/AuthGuard';
-import RoleBasedGuard from '../guards/RoleBasedGuard';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 // ----------------------------------------------------------------------
@@ -38,7 +38,6 @@ const Loadable = (Component: React.ElementType) => (props: any) => {
 };
 
 export default function Router() {
-  const customerRoles = ['customer', 'admin'];
   return useRoutes([
     {
       path: 'auth',
@@ -60,17 +59,18 @@ export default function Router() {
       path: '/',
       element: (
         <AuthGuard>
-          <MainLayout />
+          <DashboardLayout />
         </AuthGuard>
       ),
       children: [
+        { path: '/', element: <DirectToHomePage /> },
         {
-          path: '/user/:slug/references',
-          element: (
-            <RoleBasedGuard accessibleRoles={customerRoles}>
-              <></>
-            </RoleBasedGuard>
-          )
+          path: '/postgres-references',
+          element: <PostgresReferenceTab />
+        },
+        {
+          path: '/hubspot-references',
+          element: <HubspotReferenceTab />
         }
       ]
     },
@@ -93,6 +93,12 @@ const Login = Loadable(lazy(() => import('../pages/authentication/Login')));
 const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetPassword')));
 const UpdatePassword = Loadable(lazy(() => import('../pages/authentication/UpdatePassword')));
 const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCode')));
+
+// References
+const PostgresReferenceTab = Loadable(
+  lazy(() => import('../pages/references/PostgresReferenceTab'))
+);
+const HubspotReferenceTab = Loadable(lazy(() => import('../pages/references/HubspotReferenceTab')));
 
 // Main
 const Page500 = Loadable(lazy(() => import('../pages/Page500')));

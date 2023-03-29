@@ -19,12 +19,12 @@ export default function PublicDashboardLayout() {
 
   return (
     <RootStyle>
-      <LoginModal
+      {/* <LoginModal
         loginModalState={loginModalState}
         setLoginModalState={setLoginModalState}
         isRegistered={isRegistered}
         setIsRegistered={setIsRegistered}
-      />
+      /> */}
       <DashboardNavbar
         onOpenSidebar={() => setOpen(true)}
         setLoginModalState={setLoginModalState}

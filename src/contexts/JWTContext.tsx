@@ -1,6 +1,8 @@
 import { createContext, ReactNode, useEffect, useReducer } from 'react';
 // utils
-import axios from '../utils/axios';
+import axios from 'axios';
+import LocalStorageService from 'services/localStorageService';
+import axiosV1 from '../utils/axios';
 import { ParticipantProfile } from '../@types/user';
 import { setSession } from '../utils/jwt';
 // @types
@@ -100,16 +102,17 @@ const AuthContext = createContext<JWTContextType | null>(null);
 
 function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
+  const ROOT_URL = process.env.REACT_APP_ROOT_URL?.split('/api/')?.[0];
 
   useEffect(() => {
     const initialize = async () => {
       try {
-        const accessToken = window.localStorage.getItem('accessToken');
+        const accessToken = LocalStorageService.getAccessToken();
 
         if (accessToken) {
           setSession(accessToken);
 
-          const response = await axios.get('/users/my_account');
+          const response = await axiosV1.get('/users/my_account.json');
           const { user } = response.data;
           dispatch({
             type: Types.Initial,
@@ -143,12 +146,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post(`/users/sign_in`, {
-      email,
-      password
+    const response = await axios.post(`${ROOT_URL}/users/sign_in`, {
+      user: { email, password }
     });
-
-    const { accessToken, user } = response.data;
+    const accessToken = response.headers.authorization;
+    const { user } = response.data;
 
     setSession(accessToken);
     dispatch({
@@ -166,7 +168,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     role: string,
     company: string
   ) => {
-    const response = await axios.post('/users/register', {
+    const response = await axiosV1.post('/users/register', {
       email,
       password,
       fullName,
@@ -175,7 +177,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     });
     const { accessToken, user } = response.data;
 
-    window.localStorage.setItem('accessToken', accessToken);
+    LocalStorageService.setAccessToken(accessToken);
     dispatch({
       type: Types.Register,
       payload: {
@@ -185,20 +187,23 @@ function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await axios.delete(`/users/sign_out`).then((res) => {
-      setSession(null);
-      dispatch({ type: Types.Logout });
-    });
+    const accessToken = LocalStorageService.getAccessToken();
+    await axios
+      .delete(`${ROOT_URL}/users/sign_out`, { headers: { Authorization: accessToken } })
+      .then((res) => {
+        setSession(null);
+        dispatch({ type: Types.Logout });
+      });
   };
 
   const resetPassword = async (email: string) => {
-    await axios.post(`/users/reset_password`, {
+    await axiosV1.post(`/users/reset_password`, {
       email
     });
   };
 
   const updatePassword = async (password: string, reset_password_token: string | null) => {
-    await axios.post(`/users/update_password.json`, {
+    await axiosV1.post(`/users/update_password.json`, {
       password,
       reset_password_token
     });
