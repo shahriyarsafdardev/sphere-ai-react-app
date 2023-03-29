@@ -1,33 +1,55 @@
 import { memo, useState } from 'react';
 import LoadingScreen from 'components/LoadingScreen';
 import { Button, Stack, Typography } from '@material-ui/core';
+import { useSnackbar } from 'notistack5';
 import axios from 'utils/axios';
-import { HubspotReference, SearchBar, LoadingContainer } from './Common';
+import { SearchBar, LoadingContainer } from './Common';
 import ResultTable from './ResultTable';
 
 function ShowHubspotReference({
   reference,
-  setReference
+  setReference,
+  referenceType
 }: {
-  reference: HubspotReference | null;
+  reference: any;
   setReference: Function;
+  referenceType: string;
 }) {
   const [query, setQuery] = useState('');
   const [queryResult, setQueryResult] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSearch = () => {
     setIsSearching(true);
     setQueryResult(null);
     const getQuery = async () => {
-      const response: any = await axios.get(
-        `hubspot_references/${reference?.id}/query?query=${query}`
-      );
-      console.log('Response:', response.data);
-      setQueryResult(response.data?.result?.results);
+      await axios
+        .get(`${referenceType.toLowerCase()}_references/${reference?.id}/query?query=${query}`)
+        .then((response) => {
+          setQueryResult(response.data?.result);
+        })
+        .catch((error: any) => enqueueSnackbar(error.message, { variant: 'error' }));
       setIsSearching(false);
     };
     getQuery();
+  };
+
+  const renderResults = () => {
+    if (isSearching) {
+      return (
+        <LoadingContainer>
+          <LoadingScreen />
+        </LoadingContainer>
+      );
+    }
+    if (queryResult) {
+      if (queryResult.length) {
+        return <ResultTable queryResult={queryResult} />;
+      }
+      return <Typography>No results found</Typography>;
+    }
+    return <></>;
   };
 
   return (
@@ -41,17 +63,13 @@ function ShowHubspotReference({
         </Typography>
       </Stack>
       <SearchBar
-        referenceType="HubSpot"
+        referenceType={referenceType}
         searchQuery={query}
         setSearchQuery={setQuery}
         buttonFunction={handleSearch}
+        disableButton={isSearching}
       />
-      {isSearching && (
-        <LoadingContainer>
-          <LoadingScreen />
-        </LoadingContainer>
-      )}
-      {queryResult && <ResultTable queryResult={queryResult} />}
+      {renderResults()}
     </Stack>
   );
 }

@@ -3,7 +3,7 @@ import axios from 'utils/axios';
 import Page from 'components/Page';
 import { Stack, Typography } from '@material-ui/core';
 import { StyledCard, PostgresReference } from './Common';
-import ShowPostgresReference from './ShowPostgresReference';
+import ReferenceShowPage from './ReferenceShowPage';
 
 export default function PostgresReferenceTab() {
   const [currentReference, setCurrentReference] = useState<PostgresReference | null>(null);
@@ -22,7 +22,11 @@ export default function PostgresReferenceTab() {
   return (
     <Page sx={{ padding: '0 50px' }}>
       {currentReference ? (
-        <ShowPostgresReference reference={currentReference} setReference={setCurrentReference} />
+        <ReferenceShowPage
+          referenceType="Postgres"
+          reference={currentReference}
+          setReference={setCurrentReference}
+        />
       ) : (
         references.map((reference: PostgresReference) => (
           <StyledCard key={reference.id} onClick={() => setCurrentReference(reference)}>

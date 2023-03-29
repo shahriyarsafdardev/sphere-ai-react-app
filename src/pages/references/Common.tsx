@@ -49,38 +49,53 @@ export const SearchBar = memo(
     searchQuery,
     setSearchQuery,
     referenceType,
-    buttonFunction
+    buttonFunction,
+    disableButton
   }: {
     searchQuery: string;
     setSearchQuery: Function;
     referenceType: string;
     buttonFunction: Function;
-  }) => (
-    <Stack direction="row" alignItems="center">
-      <TextField
-        fullWidth
-        placeholder={`Query your ${referenceType} database`}
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        InputProps={{
-          style: { background: '#ffffff' },
-          startAdornment: (
-            <InputAdornment position="start">
-              <Icon
-                style={{ marginLeft: '5px' }}
-                icon={searchFill}
-                width={25}
-                height={25}
-                color="#101658"
-              />
-            </InputAdornment>
-          )
-        }}
-        color="primary"
-      />
-      <IconButton sx={{ width: '50px', height: '50px' }} onClick={() => buttonFunction()}>
-        <img width="24" src="/static/icons/ic-send.svg" alt="search" />
-      </IconButton>
-    </Stack>
-  )
+    disableButton: boolean;
+  }) => {
+    const handleKeyDown = (e: any) => {
+      if (e?.key === 'Enter' && !disableButton) {
+        buttonFunction();
+        e?.preventDefault();
+      }
+    };
+    return (
+      <Stack direction="row" alignItems="center">
+        <TextField
+          fullWidth
+          placeholder={`Query your ${referenceType} database`}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e)}
+          InputProps={{
+            style: { background: '#ffffff' },
+            startAdornment: (
+              <InputAdornment position="start">
+                <Icon
+                  style={{ marginLeft: '5px' }}
+                  icon={searchFill}
+                  width={25}
+                  height={25}
+                  color="#101658"
+                />
+              </InputAdornment>
+            )
+          }}
+          color="primary"
+        />
+        <IconButton
+          sx={{ width: '50px', height: '50px' }}
+          onClick={() => buttonFunction()}
+          disabled={disableButton}
+        >
+          <img width="24" src="/static/icons/ic-send.svg" alt="search" />
+        </IconButton>
+      </Stack>
+    );
+  }
 );

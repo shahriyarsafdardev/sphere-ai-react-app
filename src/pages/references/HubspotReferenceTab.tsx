@@ -3,7 +3,7 @@ import axios from 'utils/axios';
 import Page from 'components/Page';
 import { Typography, Stack } from '@material-ui/core';
 import { StyledCard, HubspotReference } from './Common';
-import ShowHubspotReference from './ShowHubspotReference';
+import ReferenceShowPage from './ReferenceShowPage';
 
 export default function HubspotReferenceTab() {
   const [currentReference, setCurrentReference] = useState<HubspotReference | null>(null);
@@ -22,7 +22,11 @@ export default function HubspotReferenceTab() {
   return (
     <Page sx={{ padding: '0 50px' }}>
       {currentReference ? (
-        <ShowHubspotReference reference={currentReference} setReference={setCurrentReference} />
+        <ReferenceShowPage
+          reference={currentReference}
+          setReference={setCurrentReference}
+          referenceType="HubSpot"
+        />
       ) : (
         references.map((reference: HubspotReference) => (
           <StyledCard key={reference.id} onClick={() => setCurrentReference(reference)}>

@@ -93,7 +93,7 @@ export default function Router() {
           path: '/hubspot-references',
           element: (
             <AuthGuard>
-              <PostgresReferenceTab />
+              <HubspotReferenceTab />
             </AuthGuard>
           )
         }
