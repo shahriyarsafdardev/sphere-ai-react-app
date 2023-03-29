@@ -19,7 +19,7 @@ const isValidToken = (accessToken: string) => {
 const setSession = (accessToken: string | null) => {
   if (accessToken) {
     LocalStorageService.setAccessToken(accessToken);
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    axios.defaults.headers.common.Authorization = accessToken;
   } else {
     LocalStorageService.removeAccessToken();
     delete axios.defaults.headers.common.Authorization;

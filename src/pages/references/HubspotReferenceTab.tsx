@@ -11,9 +11,7 @@ export default function HubspotReferenceTab() {
 
   useEffect(() => {
     const getReferences = async () => {
-      const response: any = await axios.get(
-        '/hubspot_references/my_references?email=dev.bilalzahid@gmail.com'
-      );
+      const response: any = await axios.get('/hubspot_references/my_references.json');
       setReferences(response.data);
     };
     getReferences();

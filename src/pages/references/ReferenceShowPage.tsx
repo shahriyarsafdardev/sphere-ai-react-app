@@ -21,6 +21,10 @@ function ShowHubspotReference({
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSearch = () => {
+    if (!query) {
+      enqueueSnackbar("Query can't be empty!", { variant: 'warning' });
+      return;
+    }
     setIsSearching(true);
     setQueryResult(null);
     const getQuery = async () => {

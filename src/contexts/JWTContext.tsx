@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useEffect, useReducer } from 'react';
 // utils
 import axios from 'axios';
+import LocalStorageService from 'services/localStorageService';
 import axiosV1 from '../utils/axios';
 import { ParticipantProfile } from '../@types/user';
 import { setSession } from '../utils/jwt';
@@ -106,12 +107,12 @@ function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const accessToken = window.localStorage.getItem('accessToken');
+        const accessToken = LocalStorageService.getAccessToken();
 
         if (accessToken) {
           setSession(accessToken);
 
-          const response = await axiosV1.get('/users/my_account');
+          const response = await axiosV1.get('/users/my_account.json');
           const { user } = response.data;
           dispatch({
             type: Types.Initial,
@@ -145,7 +146,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post(`${ROOT_URL}/users/sign_in.json`, {
+    const response = await axios.post(`${ROOT_URL}/users/sign_in`, {
       user: { email, password }
     });
     const accessToken = response.headers.authorization;
@@ -176,7 +177,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     });
     const { accessToken, user } = response.data;
 
-    window.localStorage.setItem('accessToken', accessToken);
+    LocalStorageService.setAccessToken(accessToken);
     dispatch({
       type: Types.Register,
       payload: {
@@ -186,10 +187,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    await axios.delete(`${ROOT_URL}/users/sign_out`).then((res) => {
-      setSession(null);
-      dispatch({ type: Types.Logout });
-    });
+    const accessToken = LocalStorageService.getAccessToken();
+    await axios
+      .delete(`${ROOT_URL}/users/sign_out`, { headers: { Authorization: accessToken } })
+      .then((res) => {
+        setSession(null);
+        dispatch({ type: Types.Logout });
+      });
   };
 
   const resetPassword = async (email: string) => {

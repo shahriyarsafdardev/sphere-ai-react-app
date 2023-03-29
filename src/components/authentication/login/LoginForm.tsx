@@ -133,9 +133,9 @@ export default function LoginForm() {
             label="Remember me"
           />
 
-          <Link component={RouterLink} variant="subtitle2" to={PATH_AUTH.resetPassword}>
+          {/* <Link component={RouterLink} variant="subtitle2" to={PATH_AUTH.resetPassword}>
             Forgot password?
-          </Link>
+          </Link> */}
         </Stack>
 
         <LoadingButton
