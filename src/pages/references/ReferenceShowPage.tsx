@@ -3,7 +3,8 @@ import LoadingScreen from 'components/LoadingScreen';
 import { Button, Stack, Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack5';
 import axios from 'utils/axios';
-import { SearchBar, LoadingContainer } from './Common';
+import SearchBar from 'components/common/SearchBar';
+import { LoadingContainer } from './Common';
 import ResultTable from './ResultTable';
 
 function ShowHubspotReference({
@@ -63,14 +64,14 @@ function ShowHubspotReference({
           {'< Back'}
         </Button>
         <Typography variant="h4" sx={{ width: '100%', textAlign: 'center' }}>
-          {reference?.name}
+          {reference?.name || reference?.title}
         </Typography>
       </Stack>
       <SearchBar
-        referenceType={referenceType}
+        placeHolder={`Query your ${referenceType} database`}
         searchQuery={query}
         setSearchQuery={setQuery}
-        buttonFunction={handleSearch}
+        submitHandler={handleSearch}
         disableButton={isSearching}
       />
       {renderResults()}
