@@ -23,28 +23,25 @@ export default function SearchTab() {
     const getData = async () => {
       await getQueryResults();
     };
-    results.length < 10 && searchQuery && !isLoading && getData();
+    results.length < 10 &&
+      searchQuery &&
+      !isLoading &&
+      !isSearching &&
+      offset < totalPdfs &&
+      getData();
   }, [results]);
 
   const getQueryResults = async () => {
+    setIsLoading(true);
     await axios
       .get(`/documents/search.json?query=${searchQuery}&offset=${offset}`)
       .then((res) => {
-        setResults([...results, ...res.data?.result]);
         setTotalPdfs(res.data?.total_documents);
         setOffset(res.data?.offset);
+        setResults([...results, ...res.data?.result]);
       })
       .catch((error: any) => enqueueSnackbar(error.message, { variant: 'error' }));
-  };
-
-  const handleSearch = async () => {
-    if (!searchQuery) {
-      enqueueSnackbar("Query can't be empty!", { variant: 'warning' });
-      return;
-    }
-    setIsSearching(true);
-    await getQueryResults();
-    setIsSearching(false);
+    setIsLoading(false);
   };
 
   const handleLoadMore = async () => {
@@ -52,11 +49,27 @@ export default function SearchTab() {
       enqueueSnackbar("Query can't be empty!", { variant: 'warning' });
       return;
     }
-    setIsLoading(true);
     await getQueryResults();
-    setIsLoading(false);
   };
 
+  const handleSearch = async () => {
+    if (!searchQuery) {
+      enqueueSnackbar("Query can't be empty!", { variant: 'warning' });
+      return;
+    }
+
+    setIsSearching(true);
+    setOffset(0);
+    await axios
+      .get(`/documents/search.json?query=${searchQuery}&offset=0`)
+      .then((res) => {
+        setTotalPdfs(res.data?.total_documents);
+        setOffset(res.data?.offset);
+        setResults(res.data?.result);
+      })
+      .catch((error: any) => enqueueSnackbar(error.message, { variant: 'error' }));
+    setIsSearching(false);
+  };
   return (
     <Page title="Sphere | Search">
       <Stack spacing={4} p="0 50px" mb="50px">

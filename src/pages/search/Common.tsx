@@ -1,4 +1,4 @@
-import { Theme, styled, Stack, Button, Box, CircularProgress } from '@material-ui/core';
+import { Theme, styled, Stack, Button, Box, CircularProgress, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 export const useStyles = makeStyles((theme: Theme) => ({
@@ -8,15 +8,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
   },
   publishDate: {
     color: '#637381'
-  },
-  mainText: {
-    color: '#212B36',
-    WebkitLineClamp: 1,
-    display: '-webkit-inline-box',
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    maxHeight: '30px',
-    wordBreak: 'break-all'
   }
 }));
 
@@ -33,11 +24,23 @@ export const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 export const StyledListItem = styled('li')(({ theme }) => ({
-  marginLeft: '30px',
+  marginLeft: '18px',
   color: '#212B36',
   marginBottom: '15px',
-  [theme.breakpoints.down('sm')]: {
-    marginBottom: '20px'
+  [theme.breakpoints.down('md')]: {
+    marginBottom: '30px'
+  }
+}));
+
+export const MainText = styled(Typography)(({ theme }) => ({
+  color: '#212B36',
+  WebkitLineClamp: 1,
+  display: '-webkit-inline-box',
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  wordBreak: 'break-all',
+  [theme.breakpoints.down('md')]: {
+    WebkitLineClamp: 3
   }
 }));
 
