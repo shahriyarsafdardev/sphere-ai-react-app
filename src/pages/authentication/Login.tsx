@@ -1,16 +1,10 @@
-import { capitalCase } from 'change-case';
-import { Link as RouterLink } from 'react-router-dom';
 // material
 import { styled } from '@material-ui/core/styles';
-import { Box, Card, Stack, Link, Alert, Tooltip, Container, Typography } from '@material-ui/core';
+import { Box, Stack, Container, Typography } from '@material-ui/core';
 // routes
 import { Helmet } from 'react-helmet-async';
-import { PATH_AUTH } from '../../routes/paths';
-// hooks
-import useAuth from '../../hooks/useAuth';
-// layouts
-import AuthLayout from '../../layouts/AuthLayout';
-// components
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import axios from 'axios';
 import Page from '../../components/Page';
 import { MHidden } from '../../components/@material-extend';
 import { LoginForm } from '../../components/authentication/login';
@@ -67,9 +61,31 @@ const StyledStack = styled(Stack)(({ theme }) => ({
   }
 }));
 
-// ----------------------------------------------------------------------
-
 export default function Login() {
+  const handleLoginSuccess = (response: any) => {
+    const token = response.credential;
+    axios
+      .post(
+        'http://localhost:3000/users/auth/google_oauth2/callback.json',
+        {
+          token
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${response.credential}`,
+            'Content-Type': 'application/json',
+            access_token: `${response.credential}`
+          }
+        }
+      )
+      .then((response) => {
+        console.log('api output:', response);
+      });
+    console.log('google output:', response);
+  };
+
+  const handleLoginError = () => {};
+
   return (
     <RootStyle title="Sphere | Login">
       <Helmet>
@@ -100,6 +116,15 @@ export default function Login() {
             </Box>
           </StyledStack>
           <LoginForm />
+          <Box sx={{ marginTop: '24px' }}>
+            <GoogleOAuthProvider clientId="821583986049-ohf1ulcf5gchv7qg6s7rus982u64m9it.apps.googleusercontent.com">
+              <GoogleLogin
+                onSuccess={handleLoginSuccess}
+                onError={handleLoginError}
+                Cross-Origin-Opener-Policy="same-origin-allow-popups"
+              />
+            </GoogleOAuthProvider>
+          </Box>
         </ContentStyle>
       </StyledContainer>
     </RootStyle>

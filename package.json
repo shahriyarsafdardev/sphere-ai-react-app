@@ -53,6 +53,7 @@
     "@material-ui/styles": "^5.0.0-beta.2",
     "@material-ui/system": "^5.0.0-beta.2",
     "@material-ui/utils": "^5.0.0-beta.1",
+    "@react-oauth/google": "^0.9.0",
     "@reduxjs/toolkit": "^1.6.1",
     "@turf/bbox": "^6.5.0",
     "@types/enzyme-adapter-react-16": "^1.0.6",
