@@ -4,7 +4,8 @@ import { Box, Stack, Container, Typography } from '@material-ui/core';
 // routes
 import { Helmet } from 'react-helmet-async';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import axios from 'axios';
+import useAuth from 'hooks/useAuth';
+import { useSnackbar } from 'notistack5';
 import Page from '../../components/Page';
 import { MHidden } from '../../components/@material-extend';
 import { LoginForm } from '../../components/authentication/login';
@@ -62,29 +63,10 @@ const StyledStack = styled(Stack)(({ theme }) => ({
 }));
 
 export default function Login() {
-  const handleLoginSuccess = (response: any) => {
-    const token = response.credential;
-    axios
-      .post(
-        'http://localhost:3000/users/auth/google_oauth2/callback.json',
-        {
-          token
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${response.credential}`,
-            'Content-Type': 'application/json',
-            access_token: `${response.credential}`
-          }
-        }
-      )
-      .then((response) => {
-        console.log('api output:', response);
-      });
-    console.log('google output:', response);
-  };
+  const { authenticateWithGoogle } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const handleLoginError = () => {};
+  const handleLoginError = () => enqueueSnackbar('Something went wrong!', { variant: 'error' });
 
   return (
     <RootStyle title="Sphere | Login">
@@ -119,7 +101,7 @@ export default function Login() {
           <Box sx={{ marginTop: '24px' }}>
             <GoogleOAuthProvider clientId="821583986049-ohf1ulcf5gchv7qg6s7rus982u64m9it.apps.googleusercontent.com">
               <GoogleLogin
-                onSuccess={handleLoginSuccess}
+                onSuccess={authenticateWithGoogle}
                 onError={handleLoginError}
                 Cross-Origin-Opener-Policy="same-origin-allow-popups"
               />

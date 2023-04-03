@@ -146,10 +146,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post(`${ROOT_URL}/users/sign_in`, {
+    const response = await axios.post(`${ROOT_URL}/users/sign_in.json`, {
       user: { email, password }
     });
     const sphereAiAccessToken = response.headers.authorization;
+    if (!sphereAiAccessToken) {
+      return;
+    }
     const { user } = response.data;
 
     setSession(sphereAiAccessToken);
@@ -159,6 +162,37 @@ function AuthProvider({ children }: { children: ReactNode }) {
         user
       }
     });
+  };
+
+  const authenticateWithGoogle = (response: any) => {
+    const token = response.credential;
+    axios
+      .post(
+        `${ROOT_URL}/users/auth/google_oauth2/callback.json`,
+        {
+          token
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${response.credential}`,
+            'Content-Type': 'application/json',
+            access_token: `${response.credential}`
+          }
+        }
+      )
+      .then((response) => {
+        const accessToken = response.headers.authorization;
+        if (accessToken) {
+          const { user } = response.data;
+          setSession(accessToken);
+          dispatch({
+            type: Types.Login,
+            payload: {
+              user
+            }
+          });
+        }
+      });
   };
 
   const register = async (
@@ -189,7 +223,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     const sphereAiAccessToken = LocalStorageService.getAccessToken();
     await axios
-      .delete(`${ROOT_URL}/users/sign_out`, { headers: { Authorization: sphereAiAccessToken } })
+      .delete(`${ROOT_URL}/users/sign_out.json`, {
+        headers: { Authorization: sphereAiAccessToken }
+      })
       .then((res) => {
         setSession(null);
         dispatch({ type: Types.Logout });
@@ -243,7 +279,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
         resetPassword,
         updateProfile,
         updatePassword,
-        setIsAuthenticated
+        setIsAuthenticated,
+        authenticateWithGoogle
       }}
     >
       {children}
