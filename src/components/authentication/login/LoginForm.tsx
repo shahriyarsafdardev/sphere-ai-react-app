@@ -55,15 +55,7 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: async (values, { setErrors, setSubmitting }) => {
       try {
-        await login(values.email, values.password).then((res) => {});
-        enqueueSnackbar('Logged in successfully!', {
-          variant: 'success',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
+        await login(values.email, values.password, enqueueSnackbar);
         if (isMountedRef.current) {
           setSubmitting(false);
         }

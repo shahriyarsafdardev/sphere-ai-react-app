@@ -145,26 +145,33 @@ function AuthProvider({ children }: { children: ReactNode }) {
     initialize();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const response = await axios.post(`${ROOT_URL}/users/sign_in.json`, {
-      user: { email, password }
-    });
-    const sphereAiAccessToken = response.headers.authorization;
-    if (!sphereAiAccessToken) {
-      return;
-    }
-    const { user } = response.data;
-
-    setSession(sphereAiAccessToken);
-    dispatch({
-      type: Types.Login,
-      payload: {
-        user
-      }
-    });
+  const login = async (email: string, password: string, enqueueSnackbar?: any) => {
+    await axios
+      .post(`${ROOT_URL}/users/sign_in.json`, {
+        user: { email, password }
+      })
+      .then((response) => {
+        const sphereAiAccessToken = response?.headers?.authorization;
+        if (sphereAiAccessToken) {
+          const { user } = response.data;
+          setSession(sphereAiAccessToken);
+          dispatch({
+            type: Types.Login,
+            payload: {
+              user
+            }
+          });
+          enqueueSnackbar('Logged in successfully!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('Something went wrong!', { variant: 'error' });
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar('Something went wrong!', { variant: 'error' });
+      });
   };
 
-  const authenticateWithGoogle = (response: any) => {
+  const authenticateWithGoogle = (response: any, enqueueSnackbar?: any) => {
     const token = response.credential;
     axios
       .post(
@@ -191,7 +198,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
               user
             }
           });
+          enqueueSnackbar('Logged in successfully!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('Something went wrong!', { variant: 'error' });
         }
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message || 'Something went wrong!', { variant: 'error' });
       });
   };
 

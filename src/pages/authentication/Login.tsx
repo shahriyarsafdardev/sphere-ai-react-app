@@ -66,6 +66,10 @@ export default function Login() {
   const { authenticateWithGoogle } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
+  const handleLoginSuccess = (response: any) => {
+    authenticateWithGoogle(response, enqueueSnackbar);
+  };
+
   const handleLoginError = () => enqueueSnackbar('Something went wrong!', { variant: 'error' });
 
   return (
@@ -101,7 +105,7 @@ export default function Login() {
           <Box sx={{ marginTop: '24px' }}>
             <GoogleOAuthProvider clientId="821583986049-ohf1ulcf5gchv7qg6s7rus982u64m9it.apps.googleusercontent.com">
               <GoogleLogin
-                onSuccess={authenticateWithGoogle}
+                onSuccess={handleLoginSuccess}
                 onError={handleLoginError}
                 Cross-Origin-Opener-Policy="same-origin-allow-popups"
               />
