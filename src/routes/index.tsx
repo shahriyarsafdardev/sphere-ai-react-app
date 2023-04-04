@@ -71,6 +71,10 @@ export default function Router() {
         {
           path: '/hubspot-references',
           element: <HubspotReferenceTab />
+        },
+        {
+          path: '/search',
+          element: <SearchTab />
         }
       ]
     },
@@ -94,11 +98,12 @@ const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetP
 const UpdatePassword = Loadable(lazy(() => import('../pages/authentication/UpdatePassword')));
 const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCode')));
 
-// References
+// Tabs
 const PostgresReferenceTab = Loadable(
   lazy(() => import('../pages/references/PostgresReferenceTab'))
 );
 const HubspotReferenceTab = Loadable(lazy(() => import('../pages/references/HubspotReferenceTab')));
+const SearchTab = Loadable(lazy(() => import('../pages/search/SearchTab')));
 
 // Main
 const Page500 = Loadable(lazy(() => import('../pages/Page500')));

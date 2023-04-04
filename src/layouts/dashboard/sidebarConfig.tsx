@@ -28,20 +28,21 @@ const ICONS = {
   bookshelf: getIcon('ic_bookshelf')
 };
 
-const referenceConfig = {
-  subheader: 'User References',
+const sidebarConfig = {
+  subheader: 'Sphere Tools',
   items: [
     {
-      title: 'Postgres',
-      path: PATH_DASHBOARD.references.postgres,
+      title: 'Postgres References',
+      path: PATH_DASHBOARD.sidebar.postgres,
       icon: ICONS.bookshelf
     },
     {
-      title: 'HubSpot',
-      path: PATH_DASHBOARD.references.hubspot,
-      icon: ICONS.cohorts
-    }
+      title: 'HubSpot References',
+      path: PATH_DASHBOARD.sidebar.hubspot,
+      icon: ICONS.bookshelf
+    },
+    { title: 'Bing Search', path: PATH_DASHBOARD.sidebar.search, icon: ICONS.bookshelf }
   ]
 };
 
-export default referenceConfig;
+export default sidebarConfig;

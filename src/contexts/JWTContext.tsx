@@ -107,10 +107,10 @@ function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const accessToken = LocalStorageService.getAccessToken();
+        const sphereAiAccessToken = LocalStorageService.getAccessToken();
 
-        if (accessToken) {
-          setSession(accessToken);
+        if (sphereAiAccessToken) {
+          setSession(sphereAiAccessToken);
 
           const response = await axiosV1.get('/users/my_account.json');
           const { user } = response.data;
@@ -149,10 +149,10 @@ function AuthProvider({ children }: { children: ReactNode }) {
     const response = await axios.post(`${ROOT_URL}/users/sign_in`, {
       user: { email, password }
     });
-    const accessToken = response.headers.authorization;
+    const sphereAiAccessToken = response.headers.authorization;
     const { user } = response.data;
 
-    setSession(accessToken);
+    setSession(sphereAiAccessToken);
     dispatch({
       type: Types.Login,
       payload: {
@@ -175,9 +175,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
       role,
       current_company: company
     });
-    const { accessToken, user } = response.data;
+    const { sphereAiAccessToken, user } = response.data;
 
-    LocalStorageService.setAccessToken(accessToken);
+    LocalStorageService.setAccessToken(sphereAiAccessToken);
     dispatch({
       type: Types.Register,
       payload: {
@@ -187,9 +187,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    const accessToken = LocalStorageService.getAccessToken();
+    const sphereAiAccessToken = LocalStorageService.getAccessToken();
     await axios
-      .delete(`${ROOT_URL}/users/sign_out`, { headers: { Authorization: accessToken } })
+      .delete(`${ROOT_URL}/users/sign_out`, { headers: { Authorization: sphereAiAccessToken } })
       .then((res) => {
         setSession(null);
         dispatch({ type: Types.Logout });

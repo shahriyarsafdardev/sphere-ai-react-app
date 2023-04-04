@@ -6,7 +6,7 @@ function path(root: string, sublink: string) {
 
 const ROOTS_AUTH = '/auth';
 const ROOTS_DASHBOARD = '';
-export const ROOT_URL = process.env.REACT_APP_ROOT_URL || 'https://app.getsphere.com/api/v1';
+export const ROOT_URL = process.env.REACT_APP_ROOT_URL;
 
 // ----------------------------------------------------------------------
 
@@ -37,9 +37,10 @@ export const PATH_DASHBOARD = {
   user: {
     account: path(ROOTS_DASHBOARD, '/user/account')
   },
-  references: {
+  sidebar: {
     postgres: path(ROOTS_DASHBOARD, '/postgres-references'),
-    hubspot: path(ROOTS_DASHBOARD, '/hubspot-references')
+    hubspot: path(ROOTS_DASHBOARD, '/hubspot-references'),
+    search: path(ROOTS_DASHBOARD, '/search')
   }
 };
 

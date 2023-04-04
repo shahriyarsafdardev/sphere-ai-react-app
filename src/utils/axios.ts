@@ -10,9 +10,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config: any) => {
-    const accessToken = LocalStorageService.getAccessToken();
-    if (accessToken) {
-      config.headers.Authorization = accessToken;
+    const sphereAiAccessToken = LocalStorageService.getAccessToken();
+    if (sphereAiAccessToken) {
+      config.headers.Authorization = sphereAiAccessToken;
     }
     return config;
   },

@@ -1,6 +1,6 @@
 const LocalStorageService = {
-  getAccessToken: () => localStorage.getItem('accessToken') || '',
-  setAccessToken: (value: string) => localStorage.setItem('accessToken', value),
-  removeAccessToken: () => localStorage.removeItem('accessToken')
+  getAccessToken: () => localStorage.getItem('sphereAiAccessToken') || '',
+  setAccessToken: (value: string) => localStorage.setItem('sphereAiAccessToken', value),
+  removeAccessToken: () => localStorage.removeItem('sphereAiAccessToken')
 };
 export default LocalStorageService;

@@ -11,7 +11,7 @@ export default function PostgresReferenceTab() {
 
   useEffect(() => {
     const getReferences = async () => {
-      const response: any = await axios.get('/postgres_references/my_references.json');
+      const response: any = await axios.get('/postgres_references.json');
       setReferences(response.data);
     };
     getReferences();

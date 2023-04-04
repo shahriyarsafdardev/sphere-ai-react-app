@@ -16,5 +16,5 @@
     "stream_token": "string",
     "full_name": "string[]"
   },
-  "accessToken": "token"
+  "sphereAiAccessToken": "token"
 }

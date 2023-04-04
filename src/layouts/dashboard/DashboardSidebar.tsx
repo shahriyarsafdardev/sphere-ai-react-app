@@ -11,7 +11,7 @@ import useCollapseDrawer from '../../hooks/useCollapseDrawer';
 // components
 import Scrollbar from '../../components/Scrollbar';
 import { MHidden } from '../../components/@material-extend';
-import referenceConfig from './referenceConfig';
+import sidebarConfig from './sidebarConfig';
 import NavSection from '../../components/NavSection';
 
 //
@@ -53,7 +53,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }: Dash
         <LogoContainer>
           <img src="/static/sphere_with_logo.svg" alt="logo.svg" width={150} />
         </LogoContainer>
-        <NavSection data-testid="admin-tools" navConfig={referenceConfig} isShow={!isCollapse} />
+        <NavSection data-testid="admin-tools" navConfig={sidebarConfig} isShow={!isCollapse} />
       </Scrollbar>
     </>
   );
