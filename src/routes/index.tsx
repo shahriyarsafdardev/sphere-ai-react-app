@@ -52,7 +52,14 @@ export default function Router() {
         },
         { path: 'reset-password', element: <ResetPassword /> },
         { path: 'update-password', element: <UpdatePassword /> },
-        { path: 'verify', element: <Verify2FA /> }
+        {
+          path: 'verify',
+          element: (
+            <GuestGuard>
+              <Verify2FA />
+            </GuestGuard>
+          )
+        }
       ]
     },
     {

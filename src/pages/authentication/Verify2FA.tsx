@@ -13,7 +13,7 @@ function Verify2FA() {
 
   useEffect(() => {
     axios
-      .post(`verification_codes.json`)
+      .post(`verifications.json`)
       .then((response) => {
         setVerificationCode(response.data.verification_code);
       })
@@ -24,7 +24,7 @@ function Verify2FA() {
 
   const handleVerifyCode = () => {
     axios
-      .post(`verification_codes/${verificationCode?.id}/verify.json`, {
+      .post(`verifications/verify.json`, {
         code
       })
       .then((response) => {
@@ -45,6 +45,12 @@ function Verify2FA() {
       });
   };
 
+  const handleCodeChange = (value: string) => {
+    if (value.length <= 6) {
+      setCode(value);
+    }
+  };
+
   return (
     <Page
       title="Sphere | Verification"
@@ -54,7 +60,8 @@ function Verify2FA() {
         alignItems: 'center',
         backgroundColor: '#12125C',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        padding: '0px 10px'
       }}
     >
       <Stack spacing={2}>
@@ -70,10 +77,10 @@ function Verify2FA() {
             <TextField
               fullWidth
               id="code"
-              placeholder="Verification Code"
+              placeholder="6-digit Verification Code"
               type="number"
               value={code}
-              onChange={(e) => setCode(e.target.value)}
+              onChange={(e) => handleCodeChange(e.target.value)}
             />
             <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} width="100%">
               <Button variant="outlined" fullWidth onClick={handleCancelCode}>

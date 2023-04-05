@@ -20,6 +20,9 @@ export default function GuestGuard({ children }: GuestGuardProps) {
     }
     return <Navigate to={PATH_DASHBOARD.root} />;
   }
+  if (window.location.href.split('/auth/')?.[1] === 'verify') {
+    return <Navigate to={PATH_AUTH.login} />;
+  }
 
   return <>{children}</>;
 }
