@@ -2,9 +2,7 @@ import { ParticipantProfile } from './user';
 
 export type ActionMap<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
-    ? {
-        type: Key;
-      }
+    ? { type: Key }
     : {
         type: Key;
         payload: M[Key];
@@ -24,7 +22,7 @@ export type JWTContextType = {
   isInitialized: boolean;
   user: AuthUser;
   method: 'jwt';
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, enqueueSnackbar?: any) => Promise<void>;
   register: (
     email: string,
     password: string,
@@ -37,4 +35,5 @@ export type JWTContextType = {
   updateProfile: (user: ParticipantProfile) => void;
   updatePassword: (password: string, reset_password_token: string | null) => Promise<void>;
   setIsAuthenticated: () => void;
+  authenticateWithGoogle: (response: any, enqueueSnackbar?: any) => void;
 };

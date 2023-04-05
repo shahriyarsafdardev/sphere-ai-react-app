@@ -145,20 +145,67 @@ function AuthProvider({ children }: { children: ReactNode }) {
     initialize();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const response = await axios.post(`${ROOT_URL}/users/sign_in`, {
-      user: { email, password }
-    });
-    const sphereAiAccessToken = response.headers.authorization;
-    const { user } = response.data;
+  const login = async (email: string, password: string, enqueueSnackbar?: any) => {
+    await axios
+      .post(`${ROOT_URL}/users/sign_in.json`, {
+        user: { email, password }
+      })
+      .then((response) => {
+        const sphereAiAccessToken = response?.headers?.authorization;
+        if (sphereAiAccessToken) {
+          const { user } = response.data;
+          setSession(sphereAiAccessToken);
+          dispatch({
+            type: Types.Login,
+            payload: {
+              user
+            }
+          });
+          enqueueSnackbar('Logged in successfully!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('Something went wrong!', { variant: 'error' });
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar('Something went wrong!', { variant: 'error' });
+      });
+  };
 
-    setSession(sphereAiAccessToken);
-    dispatch({
-      type: Types.Login,
-      payload: {
-        user
-      }
-    });
+  const authenticateWithGoogle = (response: any, enqueueSnackbar?: any) => {
+    const token = response.credential;
+    axios
+      .post(
+        `${ROOT_URL}/users/auth/google_oauth2/callback.json`,
+        {
+          token
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${response.credential}`,
+            'Content-Type': 'application/json',
+            access_token: `${response.credential}`
+          }
+        }
+      )
+      .then((response) => {
+        const accessToken = response.headers.authorization;
+        if (accessToken) {
+          const { user } = response.data;
+          setSession(accessToken);
+          dispatch({
+            type: Types.Login,
+            payload: {
+              user
+            }
+          });
+          enqueueSnackbar('Logged in successfully!', { variant: 'success' });
+        } else {
+          enqueueSnackbar('Something went wrong!', { variant: 'error' });
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message || 'Something went wrong!', { variant: 'error' });
+      });
   };
 
   const register = async (
@@ -189,7 +236,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     const sphereAiAccessToken = LocalStorageService.getAccessToken();
     await axios
-      .delete(`${ROOT_URL}/users/sign_out`, { headers: { Authorization: sphereAiAccessToken } })
+      .delete(`${ROOT_URL}/users/sign_out.json`, {
+        headers: { Authorization: sphereAiAccessToken }
+      })
       .then((res) => {
         setSession(null);
         dispatch({ type: Types.Logout });
@@ -243,7 +292,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
         resetPassword,
         updateProfile,
         updatePassword,
-        setIsAuthenticated
+        setIsAuthenticated,
+        authenticateWithGoogle
       }}
     >
       {children}

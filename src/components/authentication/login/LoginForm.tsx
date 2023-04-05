@@ -1,15 +1,12 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack5';
-import { Link as RouterLink } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
-import closeFill from '@iconify/icons-eva/close-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 // material
 import {
-  Link,
   Stack,
   Alert,
   Checkbox,
@@ -20,12 +17,9 @@ import {
 } from '@material-ui/core';
 import { LoadingButton } from '@material-ui/lab';
 // routes
-import { PATH_AUTH } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
-//
-import { MIconButton } from '../../@material-extend';
 
 // ----------------------------------------------------------------------
 type InitialValues = {
@@ -37,7 +31,7 @@ type InitialValues = {
 export default function LoginForm() {
   const { login } = useAuth();
   const isMountedRef = useIsMountedRef();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
   const [color, setColor] = useState<any>('error');
 
@@ -55,15 +49,7 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: async (values, { setErrors, setSubmitting }) => {
       try {
-        await login(values.email, values.password).then((res) => {});
-        enqueueSnackbar('Logged in successfully!', {
-          variant: 'success',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
+        await login(values.email, values.password, enqueueSnackbar);
         if (isMountedRef.current) {
           setSubmitting(false);
         }
