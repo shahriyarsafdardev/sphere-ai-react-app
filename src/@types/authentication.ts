@@ -15,10 +15,12 @@ export type AuthState = {
   isAuthenticated: boolean;
   isInitialized: boolean;
   user: AuthUser;
+  is2faVerified: boolean;
 };
 
 export type JWTContextType = {
   isAuthenticated: boolean;
+  is2faVerified: boolean;
   isInitialized: boolean;
   user: AuthUser;
   method: 'jwt';
@@ -36,4 +38,5 @@ export type JWTContextType = {
   updatePassword: (password: string, reset_password_token: string | null) => Promise<void>;
   setIsAuthenticated: () => void;
   authenticateWithGoogle: (response: any, enqueueSnackbar?: any) => void;
+  setIs2faVerified: () => void;
 };

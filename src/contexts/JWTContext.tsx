@@ -15,13 +15,15 @@ enum Types {
   Login = 'LOGIN',
   Logout = 'LOGOUT',
   Register = 'REGISTER',
-  Authenticate = 'AUTHENTICATE'
+  Authenticate = 'AUTHENTICATE',
+  Verify2fa = 'VERIFY2FA'
 }
 
 type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean;
     user: AuthUser;
+    is2faVerified: boolean;
   };
   [Types.Login]: {
     user: AuthUser;
@@ -31,6 +33,7 @@ type JWTAuthPayload = {
     user: AuthUser;
   };
   [Types.Authenticate]: { isAuthenticated: boolean };
+  [Types.Verify2fa]: { is2faVerified: boolean };
 };
 
 export type JWTActions = ActionMap<JWTAuthPayload>[keyof ActionMap<JWTAuthPayload>];
@@ -38,7 +41,8 @@ export type JWTActions = ActionMap<JWTAuthPayload>[keyof ActionMap<JWTAuthPayloa
 const initialState: AuthState = {
   isAuthenticated: false,
   isInitialized: false,
-  user: null
+  user: null,
+  is2faVerified: false
 };
 
 const JWTReducer = (state: AuthState, action: JWTActions) => {
@@ -54,7 +58,8 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       return {
         isAuthenticated: action.payload.isAuthenticated,
         isInitialized: true,
-        user: newUser
+        user: newUser,
+        is2faVerified: action.payload.is2faVerified
       };
     case 'LOGIN':
       newUser = action.payload.user;
@@ -93,6 +98,12 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
         isAuthenticated: true
       };
 
+    case 'VERIFY2FA':
+      return {
+        ...state,
+        is2faVerified: true
+      };
+
     default:
       return state;
   }
@@ -118,7 +129,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
             type: Types.Initial,
             payload: {
               isAuthenticated: true,
-              user
+              user,
+              is2faVerified: user.is_2fa_verified
             }
           });
         } else {
@@ -126,7 +138,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
             type: Types.Initial,
             payload: {
               isAuthenticated: false,
-              user: null
+              user: null,
+              is2faVerified: false
             }
           });
         }
@@ -136,7 +149,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
           type: Types.Initial,
           payload: {
             isAuthenticated: false,
-            user: null
+            user: null,
+            is2faVerified: false
           }
         });
       }
@@ -267,7 +281,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
       type: Types.Initial,
       payload: {
         isAuthenticated: true,
-        user
+        user,
+        is2faVerified: true
       }
     });
   };
@@ -277,7 +292,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
       type: Types.Authenticate,
       payload: {
         isAuthenticated: true
-        // user
+      }
+    });
+
+  const setIs2faVerified = () =>
+    dispatch({
+      type: Types.Verify2fa,
+      payload: {
+        is2faVerified: true
       }
     });
 
@@ -293,7 +315,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
         updateProfile,
         updatePassword,
         setIsAuthenticated,
-        authenticateWithGoogle
+        authenticateWithGoogle,
+        setIs2faVerified
       }}
     >
       {children}

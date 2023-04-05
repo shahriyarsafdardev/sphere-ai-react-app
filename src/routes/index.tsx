@@ -52,7 +52,7 @@ export default function Router() {
         },
         { path: 'reset-password', element: <ResetPassword /> },
         { path: 'update-password', element: <UpdatePassword /> },
-        { path: 'verify', element: <VerifyCode /> }
+        { path: 'verify', element: <Verify2FA /> }
       ]
     },
     {
@@ -96,7 +96,7 @@ export default function Router() {
 const Login = Loadable(lazy(() => import('../pages/authentication/Login')));
 const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetPassword')));
 const UpdatePassword = Loadable(lazy(() => import('../pages/authentication/UpdatePassword')));
-const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCode')));
+const Verify2FA = Loadable(lazy(() => import('../pages/authentication/Verify2FA')));
 
 // Tabs
 const PostgresReferenceTab = Loadable(
