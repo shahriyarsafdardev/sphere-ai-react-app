@@ -18,7 +18,7 @@ export default function HubspotReferenceTab() {
   }, []);
 
   return (
-    <Page sx={{ padding: '0 50px' }}>
+    <Page title="Sphere | HubSpot References" sx={{ padding: '0 50px' }}>
       {currentReference ? (
         <ReferenceShowPage
           reference={currentReference}

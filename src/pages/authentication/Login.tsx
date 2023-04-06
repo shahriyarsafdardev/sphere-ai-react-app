@@ -5,6 +5,7 @@ import { styled } from '@material-ui/core/styles';
 import { Box, Card, Stack, Link, Alert, Tooltip, Container, Typography } from '@material-ui/core';
 // routes
 import { Helmet } from 'react-helmet-async';
+import { useEffect, useCallback } from 'react';
 import { PATH_AUTH } from '../../routes/paths';
 // hooks
 import useAuth from '../../hooks/useAuth';
@@ -14,6 +15,7 @@ import AuthLayout from '../../layouts/AuthLayout';
 import Page from '../../components/Page';
 import { MHidden } from '../../components/@material-extend';
 import { LoginForm } from '../../components/authentication/login';
+import TwoFactorAuth from './TwoFactorAuth';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +61,7 @@ const Title = styled(Typography)(({ theme }) => ({
 }));
 
 const StyledStack = styled(Stack)(({ theme }) => ({
-  marginBottom: '2.75rem',
+  marginBottom: '1rem',
   marginTop: 0,
   [theme.breakpoints.down('sm')]: {
     marginBottom: '1.5rem',
@@ -70,6 +72,18 @@ const StyledStack = styled(Stack)(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Login() {
+  const { isAuthenticated, isLoggedIn } = useAuth();
+
+  const renderContent = useCallback(() => {
+    if (!isLoggedIn) {
+      return <LoginForm />;
+    }
+    if (!isAuthenticated) {
+      return <TwoFactorAuth />;
+    }
+    return <></>;
+  }, [isLoggedIn, isAuthenticated]);
+
   return (
     <RootStyle title="Sphere | Login">
       <Helmet>
@@ -99,7 +113,7 @@ export default function Login() {
               </Typography>
             </Box>
           </StyledStack>
-          <LoginForm />
+          {renderContent()}
         </ContentStyle>
       </StyledContainer>
     </RootStyle>

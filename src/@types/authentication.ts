@@ -16,12 +16,14 @@ export type AuthUser = null | Record<string, any>;
 export type AuthState = {
   isAuthenticated: boolean;
   isInitialized: boolean;
+  isLoggedIn: boolean;
   user: AuthUser;
 };
 
 export type JWTContextType = {
   isAuthenticated: boolean;
   isInitialized: boolean;
+  isLoggedIn: boolean;
   user: AuthUser;
   method: 'jwt';
   login: (email: string, password: string) => Promise<void>;

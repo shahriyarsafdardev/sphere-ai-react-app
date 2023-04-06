@@ -2,6 +2,7 @@ import { createContext, ReactNode, useEffect, useReducer } from 'react';
 // utils
 import axios from 'axios';
 import LocalStorageService from 'services/localStorageService';
+import moment from 'moment';
 import axiosV1 from '../utils/axios';
 import { ParticipantProfile } from '../@types/user';
 import { setSession } from '../utils/jwt';
@@ -22,6 +23,7 @@ type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean;
     user: AuthUser;
+    isLoggedIn: boolean;
   };
   [Types.Login]: {
     user: AuthUser;
@@ -38,6 +40,7 @@ export type JWTActions = ActionMap<JWTAuthPayload>[keyof ActionMap<JWTAuthPayloa
 const initialState: AuthState = {
   isAuthenticated: false,
   isInitialized: false,
+  isLoggedIn: false,
   user: null
 };
 
@@ -54,7 +57,8 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       return {
         isAuthenticated: action.payload.isAuthenticated,
         isInitialized: true,
-        user: newUser
+        user: newUser,
+        isLoggedIn: action.payload.isLoggedIn
       };
     case 'LOGIN':
       newUser = action.payload.user;
@@ -65,14 +69,16 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       };
       return {
         ...state,
-        isAuthenticated: true,
-        user: newUser
+        isAuthenticated: false,
+        user: newUser,
+        isLoggedIn: true
       };
     case 'LOGOUT':
       return {
         ...state,
         isAuthenticated: false,
-        user: null
+        user: null,
+        isLoggedIn: false
       };
 
     case 'REGISTER':
@@ -108,8 +114,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
     const initialize = async () => {
       try {
         const sphereAiAccessToken = LocalStorageService.getAccessToken();
+        const verified2FADate = LocalStorageService.get2FAVerificationDate();
+        const is2FAValid =
+          verified2FADate && moment().subtract(3, 'minutes') <= moment(verified2FADate);
 
-        if (sphereAiAccessToken) {
+        if (sphereAiAccessToken && is2FAValid) {
           setSession(sphereAiAccessToken);
 
           const response = await axiosV1.get('/users/my_account.json');
@@ -118,7 +127,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
             type: Types.Initial,
             payload: {
               isAuthenticated: true,
-              user
+              user,
+              isLoggedIn: true
             }
           });
         } else {
@@ -126,7 +136,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
             type: Types.Initial,
             payload: {
               isAuthenticated: false,
-              user: null
+              user: null,
+              isLoggedIn: false
             }
           });
         }
@@ -136,7 +147,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
           type: Types.Initial,
           payload: {
             isAuthenticated: false,
-            user: null
+            user: null,
+            isLoggedIn: false
           }
         });
       }
@@ -192,6 +204,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       .delete(`${ROOT_URL}/users/sign_out`, { headers: { Authorization: sphereAiAccessToken } })
       .then((res) => {
         setSession(null);
+        LocalStorageService.remove2FAVerificationDate();
         dispatch({ type: Types.Logout });
       });
   };
@@ -218,7 +231,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
       type: Types.Initial,
       payload: {
         isAuthenticated: true,
-        user
+        user,
+        isLoggedIn: true
       }
     });
   };

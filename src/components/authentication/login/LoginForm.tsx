@@ -56,14 +56,6 @@ export default function LoginForm() {
     onSubmit: async (values, { setErrors, setSubmitting }) => {
       try {
         await login(values.email, values.password).then((res) => {});
-        enqueueSnackbar('Logged in successfully!', {
-          variant: 'success',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
         if (isMountedRef.current) {
           setSubmitting(false);
         }
@@ -90,7 +82,7 @@ export default function LoginForm() {
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+        <Stack spacing={3} sx={{ marginTop: '2.75rem' }}>
           {errors.afterSubmit && <Alert severity={color}>{errors.afterSubmit}</Alert>}
 
           <TextField
