@@ -11,13 +11,13 @@ type AuthGuardProps = {
 };
 
 export default function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated, is2faVerified } = useAuth();
+  const { isAuthenticated, isOtpVerified } = useAuth();
 
   if (!isAuthenticated) {
     return <Login />;
   }
 
-  if (isAuthenticated && !is2faVerified) {
+  if (isAuthenticated && !isOtpVerified) {
     return <Navigate to={PATH_AUTH.verify} />;
   }
 

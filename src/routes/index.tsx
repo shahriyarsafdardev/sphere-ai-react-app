@@ -5,7 +5,7 @@ import DirectToHomePage from 'components/DirectToHomePage';
 import DashboardLayout from 'layouts/dashboard';
 import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
 // guards
-import GuestGuard from '../guards/GuestGuard';
+import OtpGuard from '../guards/OtpGuard';
 import AuthGuard from '../guards/AuthGuard';
 // components
 import LoadingScreen from '../components/LoadingScreen';
@@ -45,9 +45,9 @@ export default function Router() {
         {
           path: 'login',
           element: (
-            <GuestGuard>
+            <OtpGuard>
               <Login />
-            </GuestGuard>
+            </OtpGuard>
           )
         },
         { path: 'reset-password', element: <ResetPassword /> },
@@ -55,9 +55,9 @@ export default function Router() {
         {
           path: 'verify',
           element: (
-            <GuestGuard>
+            <OtpGuard>
               <Verify2FA />
-            </GuestGuard>
+            </OtpGuard>
           )
         }
       ]

@@ -7,20 +7,19 @@ import { PATH_AUTH, PATH_DASHBOARD } from '../routes/paths';
 
 // ----------------------------------------------------------------------
 
-type GuestGuardProps = {
+type OtpGuardProps = {
   children: ReactNode;
 };
 
-export default function GuestGuard({ children }: GuestGuardProps) {
-  const { isAuthenticated, is2faVerified } = useAuth();
+export default function OtpGuard({ children }: OtpGuardProps) {
+  const { isAuthenticated, isOtpVerified } = useAuth();
+  const pageTitle = window.location.href.split('/auth/')?.[1];
 
   if (isAuthenticated) {
-    if (!is2faVerified) {
-      return <Navigate to={PATH_AUTH.verify} />;
-    }
-    return <Navigate to={PATH_DASHBOARD.root} />;
+    if (isOtpVerified) return <Navigate to={PATH_DASHBOARD.root} />;
+    if (pageTitle !== 'verify') return <Navigate to={PATH_AUTH.verify} />;
   }
-  if (window.location.href.split('/auth/')?.[1] === 'verify') {
+  if (!isAuthenticated && pageTitle === 'verify') {
     return <Navigate to={PATH_AUTH.login} />;
   }
 

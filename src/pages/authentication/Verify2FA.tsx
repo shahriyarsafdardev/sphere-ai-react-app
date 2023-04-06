@@ -1,21 +1,23 @@
-import { Typography, Stack, TextField, Button } from '@material-ui/core';
+import { Typography, Stack, TextField, Button, Box } from '@material-ui/core';
 import Page from 'components/Page';
 import useAuth from 'hooks/useAuth';
 import { useSnackbar } from 'notistack5';
 import { useEffect, useState } from 'react';
 import axios from 'utils/axios';
+import QRCode from 'react-qr-code';
 
 function Verify2FA() {
+  const { user } = useAuth();
   const [code, setCode] = useState('');
-  const [verificationCode, setVerificationCode] = useState<any>();
   const { enqueueSnackbar } = useSnackbar();
-  const { setIs2faVerified } = useAuth();
+  const { setIsOtpVerified } = useAuth();
+  const [qrCode, setQrCode] = useState<string>('');
 
   useEffect(() => {
     axios
-      .post(`verifications.json`)
+      .post(`otp_secrets.json`)
       .then((response) => {
-        setVerificationCode(response.data.verification_code);
+        setQrCode(response.data.qr_link);
       })
       .catch((error) => {
         enqueueSnackbar('Something went wrong!', { variant: 'error' });
@@ -24,11 +26,11 @@ function Verify2FA() {
 
   const handleVerifyCode = () => {
     axios
-      .post(`verifications/verify.json`, {
-        code
+      .post(`otp_secrets/verify.json`, {
+        otp_code: code
       })
       .then((response) => {
-        setIs2faVerified();
+        setIsOtpVerified();
         enqueueSnackbar('Successfully verified!', { variant: 'success' });
       })
       .catch((error) => {
@@ -38,7 +40,7 @@ function Verify2FA() {
 
   const handleCancelCode = () => {
     axios
-      .delete(`verification_codes/${verificationCode?.id}.json`)
+      .delete(`verification_codes/abc.json`)
       .then((response) => {})
       .catch((error) => {
         enqueueSnackbar('Something went wrong!', { variant: 'error' });
@@ -46,7 +48,7 @@ function Verify2FA() {
   };
 
   const handleCodeChange = (value: string) => {
-    if (value.length <= 6) {
+    if (value?.length <= 6) {
       setCode(value);
     }
   };
@@ -64,7 +66,19 @@ function Verify2FA() {
         padding: '0px 10px'
       }}
     >
-      <Stack spacing={2}>
+      <Stack spacing={2} alignItems="center">
+        {!user?.is_qr_scanned && (
+          <Box
+            sx={{
+              padding: '8px',
+              paddingBottom: '2px!important',
+              backgroundColor: '#fff',
+              borderRadius: '5px'
+            }}
+          >
+            <QRCode value={qrCode} size={75} viewBox="0 0 75 75" />
+          </Box>
+        )}
         <Typography variant="h4" sx={{ color: '#fff', textAlign: 'center' }}>
           Verify Your Identity
         </Typography>
@@ -82,14 +96,9 @@ function Verify2FA() {
               value={code}
               onChange={(e) => handleCodeChange(e.target.value)}
             />
-            <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} width="100%">
-              <Button variant="outlined" fullWidth onClick={handleCancelCode}>
-                Cancel
-              </Button>
-              <Button variant="contained" fullWidth onClick={handleVerifyCode}>
-                Verify
-              </Button>
-            </Stack>
+            <Button variant="contained" fullWidth onClick={handleVerifyCode}>
+              Verify
+            </Button>
           </Stack>
         </Stack>
       </Stack>

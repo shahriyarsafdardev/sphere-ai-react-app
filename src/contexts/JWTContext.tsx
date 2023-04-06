@@ -16,14 +16,14 @@ enum Types {
   Logout = 'LOGOUT',
   Register = 'REGISTER',
   Authenticate = 'AUTHENTICATE',
-  Verify2fa = 'VERIFY2FA'
+  VerifyOtp = 'VERIFY2FA'
 }
 
 type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean;
     user: AuthUser;
-    is2faVerified: boolean;
+    isOtpVerified: boolean;
   };
   [Types.Login]: {
     user: AuthUser;
@@ -33,7 +33,7 @@ type JWTAuthPayload = {
     user: AuthUser;
   };
   [Types.Authenticate]: { isAuthenticated: boolean };
-  [Types.Verify2fa]: { is2faVerified: boolean };
+  [Types.VerifyOtp]: { isOtpVerified: boolean };
 };
 
 export type JWTActions = ActionMap<JWTAuthPayload>[keyof ActionMap<JWTAuthPayload>];
@@ -42,7 +42,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
-  is2faVerified: false
+  isOtpVerified: false
 };
 
 const JWTReducer = (state: AuthState, action: JWTActions) => {
@@ -59,7 +59,7 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
         isAuthenticated: action.payload.isAuthenticated,
         isInitialized: true,
         user: newUser,
-        is2faVerified: action.payload.is2faVerified
+        isOtpVerified: action.payload.isOtpVerified
       };
     case 'LOGIN':
       newUser = action.payload.user;
@@ -77,7 +77,8 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       return {
         ...state,
         isAuthenticated: false,
-        user: null
+        user: null,
+        isOtpVerified: false
       };
 
     case 'REGISTER':
@@ -101,7 +102,7 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
     case 'VERIFY2FA':
       return {
         ...state,
-        is2faVerified: true
+        isOtpVerified: true
       };
 
     default:
@@ -124,13 +125,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
           setSession(sphereAiAccessToken);
 
           const response = await axiosV1.get('/users/my_account.json');
-          const { user } = response.data;
+          const user = response.data;
           dispatch({
             type: Types.Initial,
             payload: {
               isAuthenticated: true,
               user,
-              is2faVerified: user.is_2fa_verified
+              isOtpVerified: user.is_otp_verified || !user.is_otp_enabled
             }
           });
         } else {
@@ -139,7 +140,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
             payload: {
               isAuthenticated: false,
               user: null,
-              is2faVerified: false
+              isOtpVerified: false
             }
           });
         }
@@ -150,7 +151,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
           payload: {
             isAuthenticated: false,
             user: null,
-            is2faVerified: false
+            isOtpVerified: false
           }
         });
       }
@@ -167,7 +168,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       .then((response) => {
         const sphereAiAccessToken = response?.headers?.authorization;
         if (sphereAiAccessToken) {
-          const { user } = response.data;
+          const user = response.data;
           setSession(sphereAiAccessToken);
           dispatch({
             type: Types.Login,
@@ -282,7 +283,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       payload: {
         isAuthenticated: true,
         user,
-        is2faVerified: true
+        isOtpVerified: true
       }
     });
   };
@@ -295,11 +296,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-  const setIs2faVerified = () =>
+  const setIsOtpVerified = () =>
     dispatch({
-      type: Types.Verify2fa,
+      type: Types.VerifyOtp,
       payload: {
-        is2faVerified: true
+        isOtpVerified: true
       }
     });
 
@@ -316,7 +317,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         updatePassword,
         setIsAuthenticated,
         authenticateWithGoogle,
-        setIs2faVerified
+        setIsOtpVerified
       }}
     >
       {children}
