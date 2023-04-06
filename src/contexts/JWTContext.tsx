@@ -71,7 +71,8 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
       return {
         ...state,
         isAuthenticated: true,
-        user: newUser
+        user: newUser,
+        isOtpVerified: false
       };
     case 'LOGOUT':
       return {
