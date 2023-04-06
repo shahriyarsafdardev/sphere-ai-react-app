@@ -55,7 +55,7 @@ function Verify2FA() {
 
   return (
     <Page
-      title="Sphere | Verification"
+      title="Sphere | OTP Verification"
       sx={{
         display: 'flex',
         justifyContent: 'center',

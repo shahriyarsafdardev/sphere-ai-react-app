@@ -56,7 +56,7 @@ export default function Router() {
           path: 'verify',
           element: (
             <OtpGuard>
-              <Verify2FA />
+              <OtpVerify />
             </OtpGuard>
           )
         }
@@ -103,7 +103,7 @@ export default function Router() {
 const Login = Loadable(lazy(() => import('../pages/authentication/Login')));
 const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetPassword')));
 const UpdatePassword = Loadable(lazy(() => import('../pages/authentication/UpdatePassword')));
-const Verify2FA = Loadable(lazy(() => import('../pages/authentication/Verify2FA')));
+const OtpVerify = Loadable(lazy(() => import('../pages/authentication/OtpVerify')));
 
 // Tabs
 const PostgresReferenceTab = Loadable(

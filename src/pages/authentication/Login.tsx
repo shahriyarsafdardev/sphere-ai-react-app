@@ -95,10 +95,10 @@ export default function Login() {
           <StyledStack direction="row" alignItems="center">
             <Box sx={{ flexGrow: 1 }}>
               <Title gutterBottom>Welcome to the Sphere Portal</Title>
-              <Typography sx={{ color: 'text.secondary' }}>
+              {/* <Typography sx={{ color: 'text.secondary' }}>
                 Sphere's portal can be used to access your cohort content, network and messages at
                 any time!
-              </Typography>
+              </Typography> */}
             </Box>
           </StyledStack>
           <LoginForm />
