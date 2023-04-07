@@ -18,7 +18,7 @@ export default function PostgresReferenceTab() {
   }, []);
 
   return (
-    <Page sx={{ padding: '0 50px' }}>
+    <Page title="Sphere | Postgres References" sx={{ padding: '0 50px' }}>
       {currentReference ? (
         <ReferenceShowPage
           referenceType="Postgres"

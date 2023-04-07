@@ -6,9 +6,12 @@ import { Helmet } from 'react-helmet-async';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import useAuth from 'hooks/useAuth';
 import { useSnackbar } from 'notistack5';
+import { useCallback } from 'react';
+
 import Page from '../../components/Page';
 import { MHidden } from '../../components/@material-extend';
 import { LoginForm } from '../../components/authentication/login';
+import TwoFactorAuth from './TwoFactorAuth';
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +57,7 @@ const Title = styled(Typography)(({ theme }) => ({
 }));
 
 const StyledStack = styled(Stack)(({ theme }) => ({
-  marginBottom: '2.75rem',
+  marginBottom: '1rem',
   marginTop: 0,
   [theme.breakpoints.down('sm')]: {
     marginBottom: '1.5rem',
@@ -63,7 +66,8 @@ const StyledStack = styled(Stack)(({ theme }) => ({
 }));
 
 export default function Login() {
-  const { authenticateWithGoogle } = useAuth();
+  const { authenticateWithGoogle, isAuthenticated, isLoggedIn } = useAuth();
+
   const { enqueueSnackbar } = useSnackbar();
 
   const handleLoginSuccess = (response: any) => {
@@ -71,6 +75,29 @@ export default function Login() {
   };
 
   const handleLoginError = () => enqueueSnackbar('Something went wrong!', { variant: 'error' });
+
+  const renderContent = useCallback(() => {
+    if (!isLoggedIn) {
+      return (
+        <>
+          <LoginForm />
+          <Box sx={{ marginTop: '24px' }}>
+            <GoogleOAuthProvider clientId="821583986049-ohf1ulcf5gchv7qg6s7rus982u64m9it.apps.googleusercontent.com">
+              <GoogleLogin
+                onSuccess={handleLoginSuccess}
+                onError={handleLoginError}
+                Cross-Origin-Opener-Policy="same-origin-allow-popups"
+              />
+            </GoogleOAuthProvider>
+          </Box>
+        </>
+      );
+    }
+    if (!isAuthenticated) {
+      return <TwoFactorAuth />;
+    }
+    return <></>;
+  }, [isLoggedIn, isAuthenticated]);
 
   return (
     <RootStyle title="Sphere | Login">
@@ -101,16 +128,7 @@ export default function Login() {
               </Typography>
             </Box>
           </StyledStack>
-          <LoginForm />
-          <Box sx={{ marginTop: '24px' }}>
-            <GoogleOAuthProvider clientId="821583986049-ohf1ulcf5gchv7qg6s7rus982u64m9it.apps.googleusercontent.com">
-              <GoogleLogin
-                onSuccess={handleLoginSuccess}
-                onError={handleLoginError}
-                Cross-Origin-Opener-Policy="same-origin-allow-popups"
-              />
-            </GoogleOAuthProvider>
-          </Box>
+          {renderContent()}
         </ContentStyle>
       </StyledContainer>
     </RootStyle>

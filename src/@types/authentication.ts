@@ -14,11 +14,13 @@ export type AuthUser = null | Record<string, any>;
 export type AuthState = {
   isAuthenticated: boolean;
   isInitialized: boolean;
+  isLoggedIn: boolean;
   user: AuthUser;
 };
 
 export type JWTContextType = {
   isAuthenticated: boolean;
+  isLoggedIn: boolean;
   isInitialized: boolean;
   user: AuthUser;
   method: 'jwt';
@@ -32,7 +34,7 @@ export type JWTContextType = {
   ) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => void;
-  updateProfile: (user: ParticipantProfile) => void;
+  updateProfile: (user: Record<string, any>) => void;
   updatePassword: (password: string, reset_password_token: string | null) => Promise<void>;
   setIsAuthenticated: () => void;
   authenticateWithGoogle: (response: any, enqueueSnackbar?: any) => void;

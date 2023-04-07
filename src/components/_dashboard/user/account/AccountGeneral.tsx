@@ -31,6 +31,7 @@ type ParticipantProfile = {
   company_image_url: string;
   number_of_employees: string;
   email: string;
+  is_otp_enabled?: boolean;
 };
 
 // ----------------------------------------------------------------------

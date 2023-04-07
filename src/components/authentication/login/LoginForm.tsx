@@ -76,7 +76,7 @@ export default function LoginForm() {
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+        <Stack spacing={3} sx={{ marginTop: '2.75rem' }}>
           {errors.afterSubmit && <Alert severity={color}>{errors.afterSubmit}</Alert>}
 
           <TextField

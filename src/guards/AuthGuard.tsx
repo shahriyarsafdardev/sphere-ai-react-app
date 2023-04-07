@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import useAuth from 'hooks/useAuth';
-import Login from '../pages/authentication/Login';
+import Login from 'pages/authentication/Login';
 
 // ----------------------------------------------------------------------
 
@@ -9,9 +9,9 @@ type AuthGuardProps = {
 };
 
 export default function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoggedIn } = useAuth();
 
-  if (!isAuthenticated) {
+  if (!isLoggedIn || !isAuthenticated) {
     return <Login />;
   }
 
