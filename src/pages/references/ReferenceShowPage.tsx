@@ -34,7 +34,7 @@ function ShowHubspotReference({
         .then((response) => {
           setQueryResult(response.data?.result);
         })
-        .catch((error: any) => enqueueSnackbar(error.message, { variant: 'error' }));
+        .catch((error: any) => enqueueSnackbar('Something went wrong!', { variant: 'error' }));
       setIsSearching(false);
     };
     getQuery();
@@ -48,13 +48,10 @@ function ShowHubspotReference({
         </LoadingContainer>
       );
     }
-    if (queryResult) {
-      if (queryResult.length) {
-        return <ResultTable queryResult={queryResult} />;
-      }
-      return <Typography>No results found</Typography>;
+    if (queryResult?.length > 0) {
+      return <ResultTable queryResult={queryResult} />;
     }
-    return <></>;
+    return <Typography>No results found</Typography>;
   };
 
   return (

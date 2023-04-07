@@ -19,6 +19,9 @@ type ResultTableHeadProps = {
   onSelectAllClick?: (checked: boolean) => void;
 };
 
+const titleCase = (s: string) =>
+  s.replace(/^_*(.)|_+(.)/g, (s, c, d) => (c ? c.toUpperCase() : ` ${d.toUpperCase()}`));
+
 const ResultTableHead = ({
   order,
   orderBy,
@@ -32,7 +35,7 @@ const ResultTableHead = ({
     <TableRow>
       {headLabel.map((headCell) => (
         <TableCell key={headCell.id} align={headCell.align || 'left'}>
-          {headCell.label}
+          {titleCase(headCell.label)}
         </TableCell>
       ))}
     </TableRow>
