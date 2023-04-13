@@ -119,7 +119,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
         if (sphereAiAccessToken) {
           setSession(sphereAiAccessToken);
-          const response = await axiosV1.get('/users/my_account.json');
+          const response = await axiosV1.get('/users/my_account/');
           const user = response.data;
           is2FAValid && LocalStorageService.save2FAVerificationDate();
           const authenticated = !!is2FAValid && user.is_otp_enabled;
@@ -160,7 +160,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string, enqueueSnackbar?: any) => {
     await axios
-      .post(`${ROOT_URL}/users/sign_in.json`, {
+      .post(`${ROOT_URL}/login/`, {
         user: { email, password }
       })
       .then((response) => {
@@ -228,7 +228,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     role: string,
     company: string
   ) => {
-    const response = await axiosV1.post('/users/register', {
+    const response = await axiosV1.post('/users/', {
       email,
       password,
       fullName,
@@ -247,10 +247,10 @@ function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    const sphereAiAccessToken = LocalStorageService.getAccessToken();
+    const sphereAiRefreshToken = LocalStorageService.getRefreshToken();
     await axios
-      .delete(`${ROOT_URL}/users/sign_out.json`, {
-        headers: { Authorization: sphereAiAccessToken }
+      .delete(`${ROOT_URL}/logout/`, {
+        headers: { refresh_token: sphereAiRefreshToken }
       })
       .then((res) => {
         setSession(null);
@@ -295,6 +295,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
+  const setIsNotAuthenticated = () =>
+    dispatch({
+      type: Types.Authenticate,
+      payload: {
+        isAuthenticated: false
+      }
+    });
+
   return (
     <AuthContext.Provider
       value={{
@@ -307,6 +315,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         updateProfile,
         updatePassword,
         setIsAuthenticated,
+        setIsNotAuthenticated,
         authenticateWithGoogle
       }}
     >

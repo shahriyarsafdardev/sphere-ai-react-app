@@ -1,6 +1,9 @@
+import { useContext } from 'react';
 import axios from 'axios';
 import LocalStorageService from 'services/localStorageService';
 import { ROOT_URL } from '../routes/paths';
+import { setSession } from './jwt';
+import { AuthContext } from '../contexts/JWTContext';
 
 // ----------------------------------------------------------------------
 
@@ -12,7 +15,7 @@ axiosInstance.interceptors.request.use(
   (config: any) => {
     const sphereAiAccessToken = LocalStorageService.getAccessToken();
     if (sphereAiAccessToken) {
-      config.headers.Authorization = sphereAiAccessToken;
+      config.headers.Authorization = `Bearer ${sphereAiAccessToken}`;
     }
     return config;
   },
@@ -21,7 +24,29 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response: any) => response,
-  (error: any) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  async (error: any) => {
+    const originalConfig = error.config;
+    if (originalConfig.url !== '/login' && error.response) {
+      if (error.response.status === 401 && !originalConfig._retry) {
+        originalConfig._retry = true;
+        await axiosInstance
+          .post('/login/refresh/', {
+            refresh: LocalStorageService.getRefreshToken()
+          })
+          .then((res: any) => {
+            const { access } = res.data;
+            LocalStorageService.setAccessToken(access);
+            return axiosInstance(originalConfig);
+          })
+          .catch((err: any) => {
+            setSession(null);
+            useContext(AuthContext)?.setIsNotAuthenticated();
+            Promise.reject((err.response && err.response.data) || 'Something went wrong!');
+          });
+      }
+    }
+    return Promise.reject((error.response && error.response.data) || 'Something went wrong!');
+  }
 );
 
 export default axiosInstance;

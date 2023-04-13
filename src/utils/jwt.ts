@@ -16,11 +16,13 @@ const isValidToken = (sphereAiAccessToken: string) => {
   return decoded.exp > currentTime;
 };
 
-const setSession = (sphereAiAccessToken: string | null) => {
+const setSession = (sphereAiAccessToken: string | null, sphereAiRefreshToken?: string) => {
   if (sphereAiAccessToken) {
+    sphereAiRefreshToken && LocalStorageService.setRefreshToken(sphereAiRefreshToken);
     LocalStorageService.setAccessToken(sphereAiAccessToken);
     axios.defaults.headers.common.Authorization = sphereAiAccessToken;
   } else {
+    LocalStorageService.removeRefreshToken();
     LocalStorageService.removeAccessToken();
     delete axios.defaults.headers.common.Authorization;
   }

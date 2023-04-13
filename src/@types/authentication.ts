@@ -37,5 +37,6 @@ export type JWTContextType = {
   updateProfile: (user: Record<string, any>) => void;
   updatePassword: (password: string, reset_password_token: string | null) => Promise<void>;
   setIsAuthenticated: () => void;
+  setIsNotAuthenticated: () => void;
   authenticateWithGoogle: (response: any, enqueueSnackbar?: any) => void;
 };
