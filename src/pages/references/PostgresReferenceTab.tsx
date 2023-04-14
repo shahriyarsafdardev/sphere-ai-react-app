@@ -10,10 +10,9 @@ export default function PostgresReferenceTab() {
   const [references, setReferences] = useState<PostgresReference[]>([]);
 
   useEffect(() => {
-    const getReferences = () => {
-      axios.get('/postgres_references/').then((res) => {
-        setReferences(res.data);
-      });
+    const getReferences = async () => {
+      const response: any = await axios.get('/postgres_references/');
+      setReferences(response.data);
     };
     getReferences();
   }, []);
