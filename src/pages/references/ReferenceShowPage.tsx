@@ -30,7 +30,7 @@ function ShowHubspotReference({
     setQueryResult(null);
     const getQuery = async () => {
       await axios
-        .get(`${referenceType.toLowerCase()}_references/${reference?.id}/query?query=${query}`)
+        .get(`/${referenceType.toLowerCase()}_references/${reference?.id}/query/?query=${query}`)
         .then((response) => {
           setQueryResult(response.data?.result);
         })

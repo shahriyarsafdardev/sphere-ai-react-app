@@ -25,10 +25,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: any) => response,
   async (error: any) => {
-    const originalConfig = error.config;
-    if (originalConfig.url !== '/login' && error.response) {
-      if (error.response.status === 401 && !originalConfig._retry) {
-        originalConfig._retry = true;
+    if (error.config.url !== '/login/' && error.response) {
+      if (error.response.status === 401) {
         await axiosInstance
           .post('/login/refresh/', {
             refresh: LocalStorageService.getRefreshToken()
@@ -36,7 +34,7 @@ axiosInstance.interceptors.response.use(
           .then((res: any) => {
             const { access } = res.data;
             LocalStorageService.setAccessToken(access);
-            return axiosInstance(originalConfig);
+            return axiosInstance(error.config);
           })
           .catch((err: any) => {
             setSession(null);

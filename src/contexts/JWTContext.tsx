@@ -107,7 +107,7 @@ const AuthContext = createContext<JWTContextType | null>(null);
 
 function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
-  const ROOT_URL = process.env.REACT_APP_ROOT_URL?.split('/api/')?.[0];
+  // const ROOT_URL = process.env.REACT_APP_ROOT_URL?.split('/api/')?.[0];
 
   useEffect(() => {
     const initialize = async () => {
@@ -159,15 +159,16 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string, enqueueSnackbar?: any) => {
-    await axios
-      .post(`${ROOT_URL}/login/`, {
+    await axiosV1
+      .post('/login/', {
         user: { email, password }
       })
       .then((response) => {
-        const sphereAiAccessToken = response?.headers?.authorization;
-        if (sphereAiAccessToken) {
-          const user = response.data;
-          setSession(sphereAiAccessToken);
+        const sphereAiAccessToken = response?.data?.access;
+        const sphereAiRefreshToken = response?.data?.refresh;
+        if (sphereAiAccessToken && sphereAiRefreshToken) {
+          const user = response?.data?.user;
+          setSession(sphereAiAccessToken, sphereAiRefreshToken);
           dispatch({
             type: Types.Login,
             payload: {
@@ -186,25 +187,16 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   const authenticateWithGoogle = (response: any, enqueueSnackbar?: any) => {
     const token = response.credential;
-    axios
-      .post(
-        `${ROOT_URL}/users/auth/google_oauth2/callback.json`,
-        {
-          token
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${response.credential}`,
-            'Content-Type': 'application/json',
-            access_token: `${response.credential}`
-          }
-        }
-      )
+    axiosV1
+      .post('/login/google/', {
+        access_token: token
+      })
       .then((response) => {
-        const accessToken = response.headers.authorization;
-        if (accessToken) {
+        const sphereAiAccessToken = response?.data?.access;
+        const sphereAiRefreshToken = response?.data?.refresh;
+        if (sphereAiAccessToken && sphereAiRefreshToken) {
           const { user } = response.data;
-          setSession(accessToken);
+          setSession(sphereAiAccessToken, sphereAiRefreshToken);
           dispatch({
             type: Types.Login,
             payload: {
@@ -248,9 +240,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     const sphereAiRefreshToken = LocalStorageService.getRefreshToken();
-    await axios
-      .delete(`${ROOT_URL}/logout/`, {
-        headers: { refresh_token: sphereAiRefreshToken }
+    await axiosV1
+      .delete('/logout/', {
+        params: { refresh_token: sphereAiRefreshToken }
       })
       .then((res) => {
         setSession(null);

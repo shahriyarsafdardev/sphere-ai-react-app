@@ -29,7 +29,7 @@ export default function SearchTab() {
   const getQueryResults = async () => {
     setIsLoading(true);
     await axios
-      .get(`/documents/search.json?query=${searchQuery}&offset=${offset}`)
+      .get(`/documents/search/?query=${searchQuery}&offset=${offset}`)
       .then((res) => {
         setTotalPdfs(res.data?.total_documents);
         setOffset(res.data?.offset);

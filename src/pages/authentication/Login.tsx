@@ -82,7 +82,7 @@ export default function Login() {
         <>
           <LoginForm />
           <Box sx={{ marginTop: '24px' }}>
-            <GoogleOAuthProvider clientId="821583986049-ohf1ulcf5gchv7qg6s7rus982u64m9it.apps.googleusercontent.com">
+            <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}>
               <GoogleLogin
                 onSuccess={handleLoginSuccess}
                 onError={handleLoginError}
