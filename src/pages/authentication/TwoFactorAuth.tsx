@@ -52,7 +52,7 @@ export default function TwoFactorAuth() {
     if (!!user && !user?.is_otp_enabled) {
       setLoading(true);
       axios
-        .post('/otp_secrets.json')
+        .post('create_otp_secret/')
         .then((response) => {
           setQRCodeImage(response.data.qr_link);
           setLoading(false);
@@ -66,7 +66,7 @@ export default function TwoFactorAuth() {
 
   const verifyCode = () => {
     axios
-      .post(`/otp_secrets/verify.json`, {
+      .post(`verify_otp/`, {
         otp_code: inputValue
       })
       .then((response) => {
